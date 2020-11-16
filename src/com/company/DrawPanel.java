@@ -1,13 +1,9 @@
 package com.company;
 
-import com.company.Drawers.LineDrawer.BresenhamLineDrawer;
 import com.company.Drawers.LineDrawer.DDALineDrawer;
 import com.company.Drawers.LineDrawer.LineDrawer;
-import com.company.Drawers.LineDrawer.WuLineDrawer;
 import com.company.Drawers.PixelDrawer.BufferedImagePixelDrawer;
-import com.company.Drawers.PixelDrawer.PixelDrawer;
 import com.company.Drawers.StringDrawer.BufferedImageStringDrawer;
-import com.company.Drawers.StringDrawer.StringDrawer;
 import com.company.Functions.*;
 import com.company.common.Converter.ScreenConverter;
 import com.company.common.Geometry.Line;
@@ -25,32 +21,21 @@ import static java.lang.StrictMath.*;
 
 public class DrawPanel extends JPanel
         implements MouseWheelListener, MouseMotionListener, MouseListener {
-    private Line xAxis = new Line(-1000, 0, 1000, 0),
-            yAxis = new Line(0, -1000, 0, 1000);
+    private final Line xAxis = new Line(-1000, 0, 1000, 0);
+    private final Line yAxis = new Line(0, -1000, 0, 1000);
 
-    private List<Line> allLines = new ArrayList();
-    private ScreenConverter sc = new ScreenConverter(-25, 25, 50, 50, 1280, 720);
+    private final List<Line> allLines = new ArrayList<>();
+    private final ScreenConverter sc = new ScreenConverter(-25, 25, 50, 50, 1280, 720);
     private ScreenPoint prevPosition;
     private Line currentNewLine;
 
     private BufferedImage bf;
-    private ChartPainter chartPainter;
-    private List<AbstractFunction> allFunc = new ArrayList();
+    private ChartDrawer chartDrawer;
+    private final List<AbstractFunction> allFunc = new ArrayList<>();
 
-    private Actions lastAction;
 
     public DrawPanel(int width, int height) {
         setSize(width, height);
-        /*sc.setScreenW(getWidth()); sc.setScreenH(getHeight());
-        bf = new BufferedImage(
-                getWidth(), getHeight(),
-                BufferedImage.TYPE_INT_RGB);
-        BufferedImagePixelDrawer pd = new BufferedImagePixelDrawer(bf);
-        DDALineDrawer ld = new DDALineDrawer(pd);
-        BufferedImageStringDrawer sd = new BufferedImageStringDrawer(bf);
-        this.chartPainter = new ChartPainter(pd, ld, sd, sc);
-
-         */
 
         this.addMouseWheelListener(this);
         this.addMouseListener(this);
@@ -68,9 +53,9 @@ public class DrawPanel extends JPanel
         BufferedImagePixelDrawer pd = new BufferedImagePixelDrawer(bf);
         LineDrawer ld = new DDALineDrawer(pd);
         BufferedImageStringDrawer sd = new BufferedImageStringDrawer(bf);
-        this.chartPainter = new ChartPainter(pd, ld, sd, sc);
-        chartPainter.setXAxis(xAxis);
-        chartPainter.setYAxis(yAxis);
+        this.chartDrawer = new ChartDrawer(pd, ld, sd, sc);
+        chartDrawer.setXAxis(xAxis);
+        chartDrawer.setYAxis(yAxis);
         Graphics2D graphics2D = bf.createGraphics();
         graphics2D.setColor(Color.WHITE);
         graphics2D.fillRect(0, 0, getWidth(), getHeight());
@@ -80,10 +65,10 @@ public class DrawPanel extends JPanel
         g.drawImage(bf, 0, 0, null);
     }
 
-    private void drawAll(/*LineDrawer ld, StringDrawer sd, PixelDrawer pd,*/ Graphics g){
-        chartPainter.drawGrid(false);
+    private void drawAll(Graphics g){
+        chartDrawer.drawGrid(false);
 
-        chartPainter.drawAxis(g);
+        chartDrawer.drawAxis(g);
 
         allFunc.forEach(this::drawOneChart);
 
@@ -107,41 +92,6 @@ public class DrawPanel extends JPanel
         }*/
     }
 
-
-
-       /* for (double i = xAxis.getP1().getX(); i < xAxis.getP2().getX(); i += deltaMajorX) {
-
-            //засечки на оси X
-            ld.drawLine(sc.r2s(new RealPoint(i , -0.05 * deltaMajorY)), sc.r2s(new RealPoint(i, 0.05 * deltaMajorY)));
-
-            //засечки на оси Y
-            ld.drawLine(sc.r2s(new RealPoint(-0.05 * deltaMajorX, i)), sc.r2s(new RealPoint( 0.05 * deltaMajorX, i)));
-
-
-            String num = String.valueOf(i);
-            if(num.endsWith(".0"))
-                num = num.substring(0, num.length() - 2);
-            if(num.length() > 8)
-                num = String.format("%.2e", i);
-
-
-            FontMetrics fm = g.getFontMetrics();
-            int width = fm.stringWidth(num);
-
-            //цифры на оси X
-            ScreenPoint temp = sc.r2s(new RealPoint(i, -0.5 * deltaMajorY));
-            sd.drawString(num, temp.getX() - width / 2, temp.getY());
-
-
-
-          if(i == 0) continue;
-            ScreenPoint tmp = sc.r2s(new RealPoint(-0.5 * deltaMajorY, i));
-            sd.drawString(num, tmp.getX() - width, tmp.getY() + 5);
-
-        }
-
-        */
-
     @Override
     public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
         int clicks = mouseWheelEvent.getWheelRotation();
@@ -154,26 +104,6 @@ public class DrawPanel extends JPanel
         sc.setRealH(sc.getRealH() * scale);
         sc.setRealW(sc.getRealW() * scale);
 
-        //temp = (sc.getScreenW() / (sc.getRealW() * sc.getRealW()));
-        //delta *= clicks > 0 ? abs(clicks) * 2 : abs(clicks) / 2;
-
-        /*System.out.println("delta" + delta);
-        System.out.println(computeBestSteps(1.9537838031769912,
-                new int[]{5, 4, 5},
-                new int[]{1, 2, 5})[0]);
-         */
-       // delta = (Double.compare(scale, 1) > 0) ? delta * 2 : delta / 2;
-       /* if (mouseWheelEvent.getWheelRotation() > 0){
-            this.delta *= 2;
-            sc.setRealH(sc.getRealH() * 2);
-            sc.setRealW(sc.getRealW() * 2);
-        }else{
-            this.delta /= 2;
-            sc.setRealH(sc.getRealH() / 2);
-            sc.setRealW(sc.getRealW() / 2);
-        }
-
-        */
         //автоцентрирование
         //TODO сделать через параметр
         sc.setyR(sc.getRealH() / 2);
@@ -183,15 +113,10 @@ public class DrawPanel extends JPanel
         yAxis.setP1(new RealPoint(0, yAxis.getP1().getY() * scale));
         yAxis.setP2(new RealPoint(0, yAxis.getP2().getY() * scale));
 
-        chartPainter.setConverter(sc);
-        chartPainter.setXAxis(xAxis);
-        chartPainter.setYAxis(yAxis);
+        chartDrawer.setConverter(sc);
+        chartDrawer.setXAxis(xAxis);
+        chartDrawer.setYAxis(yAxis);
 
-        /*xAxis.setP2(new RealPoint(sc.getRealW(), 0));
-        yAxis.setP1(new RealPoint(0, -sc.getRealH()));
-        yAxis.setP2(new RealPoint(0, sc.getRealH()));
-
-         */
         repaint();
     }
 
@@ -242,13 +167,9 @@ public class DrawPanel extends JPanel
                     -currentPosition.getX() + prevPosition.getX(),
                     -currentPosition.getY() + prevPosition.getY());
             RealPoint deltaReal = sc.screen2Real(delta);
-            /*RealPoint vector = new RealPoint(
-                    deltaReal.getX() - sc.getxR(),
-                    deltaReal.getY() - sc.getyR());
-             */
             sc.setxR(deltaReal.getX());
             sc.setyR(deltaReal.getY());
-            chartPainter.setConverter(sc);
+            chartDrawer.setConverter(sc);
             if(prevPosition != currentPosition) {
                 prevPosition = currentPosition;
                 flag = true;
@@ -267,84 +188,15 @@ public class DrawPanel extends JPanel
 
     }
 
-   /* @Override
-    public void repaint() {
-        /*super.repaint();
-        if(chartPainter == null)
-            return;
-        //drawAll(this.getGraphics());
-        if(allFunc != null && !allFunc.isEmpty())
-            chartPainter.drawChart(allFunc.get(allFunc.size() - 1));
-
-
-
-
-        /*if(sc == null)
-            return;
-        sc.setScreenW(getWidth()); sc.setScreenH(getHeight());
-        bf = new BufferedImage(
-                getWidth(), getHeight(),
-                BufferedImage.TYPE_INT_RGB);
-
-
-        if(chartPainter == null)
-            return;
-        Graphics g = this.getGraphics();
-        BufferedImagePixelDrawer pd = new BufferedImagePixelDrawer(bf);
-        DDALineDrawer ld = new DDALineDrawer(pd);
-        BufferedImageStringDrawer sd = new BufferedImageStringDrawer(bf);
-        /*this.chartPainter = new ChartPainter(pd, ld, sd, sc);
-        chartPainter.setXAxis(xAxis);
-        chartPainter.setYAxis(yAxis);
-
-
-        Graphics2D graphics2D = bf.createGraphics();
-        graphics2D.setColor(Color.WHITE);
-        graphics2D.fillRect(0, 0, getWidth(), getHeight());
-        graphics2D.dispose();
-
-        allFunc.forEach(this::drawOneChart);
-        drawAll(g);
-        //chartPainter.drawChart(new ComplexFunction(new Sine().setA(2), new Cosine().setW(5), '*', 0));
-        g.drawImage(bf, 0, 0, null);
-    }
-    */
-
-
     public void addFunc(AbstractFunction function) {
         allFunc.add(function);
-        lastAction = Actions.ADD;
-       // drawOneChart(function);
     }
 
     public void drawOneChart(AbstractFunction function) {
-        //addFunc(function);
-
-        chartPainter.drawChart(function);
-        //repaint();
-        //repaintCharts();
-       //repaint();
+        chartDrawer.drawChart(function);
     }
-
-    /*private void repaintCharts() {
-        paint(this.getGraphics());
-    }
-
-     */
 
     public void removeFunc(AbstractFunction f) {
         allFunc.remove(f);
-        lastAction = Actions.REMOVE;
-        //allFunc.forEach(this::drawOneChart);
     }
-
-   /* public ChartPainter getChartPainter() {
-        return chartPainter;
-    }
-
-    */
-    enum Actions{
-        ADD,
-       REMOVE
-   }
 }

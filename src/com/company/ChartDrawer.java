@@ -1,9 +1,7 @@
 package com.company;
 
-import com.company.Drawers.LineDrawer.DDALineDrawer;
 import com.company.Drawers.LineDrawer.LineDrawer;
 import com.company.Drawers.PixelDrawer.BufferedImagePixelDrawer;
-import com.company.Drawers.PixelDrawer.PixelDrawer;
 import com.company.Drawers.StringDrawer.BufferedImageStringDrawer;
 import com.company.Drawers.StringDrawer.StringDrawer;
 import com.company.Functions.AbstractFunction;
@@ -15,11 +13,10 @@ import com.company.common.Geometry.RealPoint;
 import com.company.common.Geometry.ScreenPoint;
 
 import java.awt.*;
-import java.math.BigDecimal;
 
 import static java.lang.StrictMath.*;
 
-public class ChartPainter {
+public class ChartDrawer {
 
     private final int[] minor = new int[] {5, 4, 5};
     private final int[] major = new int[] {1, 2, 5};
@@ -32,7 +29,7 @@ public class ChartPainter {
     private BufferedImageStringDrawer sd;
     private ScreenConverter sc;
 
-    public ChartPainter(BufferedImagePixelDrawer pd, LineDrawer ld, BufferedImageStringDrawer sd, ScreenConverter sc) {
+    public ChartDrawer(BufferedImagePixelDrawer pd, LineDrawer ld, BufferedImageStringDrawer sd, ScreenConverter sc) {
         this.pd = pd;
         this.ld = ld;
         this.sd = sd;
@@ -73,7 +70,7 @@ public class ChartPainter {
         }
     }
 
-    public void drawAxis(/*LineDrawer ld, StringDrawer sd,*/ Graphics g) {
+    public void drawAxis(Graphics g) {
         //отрисовка двух осей
         drawOneLine(ld, xAxis);
         drawOneLine(ld, yAxis);
@@ -86,7 +83,7 @@ public class ChartPainter {
         drawNumber(g, sd, deltaMajorY, deltaMajorX, yAxis.getP2().getY(), false);
 
     }
-    public void drawGrid(/*PixelDrawer pd, LineDrawer ld,*/ boolean flag) {
+    public void drawGrid(boolean flag) {
         ld.setColor(Color.GRAY.brighter());
         double[] t = computeBestSteps(estimateMajors()[0], minor, major);
         double[] t1 = computeBestSteps(estimateMajors()[1], minor, major);
@@ -161,27 +158,7 @@ public class ChartPainter {
     private void drawChart(LineDrawer ld, AbstractFunction function) {
         ld.setColor(Color.RED);
         double a, b, c, d, e;
-       /*boolean swap = false;
-       if (function instanceof InvFunction) {
-           /*a = ( b = sc.getyR() ) - sc.getRealH();
-           c = abs((e = sc.getxR()) + sc.getRealW());
-           d = -2 * deltaMajorX;
 
-
-           b = ( a = sc.getxR() ) + sc.getRealW();
-           c = abs((e = sc.getyR()) - sc.getRealH());
-           d = 2 * deltaMajorX;
-
-           //a = yAxis.getP1().getY();
-           //b = yAxis.getP2().getY();
-           swap = true;
-       } else {
-
-         //  a = xAxis.getP1().getX();
-         //  b = xAxis.getP2().getX();
-       }
-
-        */
         b = ( a = sc.getxR() ) + sc.getRealW();
         c = (e = sc.getyR()) - sc.getRealH();
         d = 2 * deltaMajorY;

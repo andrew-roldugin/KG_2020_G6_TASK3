@@ -1,8 +1,6 @@
 package com.company;
 
 import com.company.Functions.*;
-import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -20,7 +18,6 @@ public class FunctionPanel extends JPanel {
 
     public void create() {
         Font standardFont = new Font("TimesRoman", Font.BOLD | Font.ITALIC, 16);
-        //MigLayout layout = new MigLayout();
         String str = null;
         try {
             str = function.getFuncBuilder();

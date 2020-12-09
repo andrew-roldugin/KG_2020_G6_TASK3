@@ -32,13 +32,7 @@ public class BresenhamLineDrawer implements LineDrawer {
         }
         int x, y, error;
         boolean swap = false;
-       /* if(abs(x2 - x1) < abs(y2 - y1)){
-            int temp = x1; x1 = y1; y1 = temp;
-            temp = x2; x2 = y2; y2 = temp;
-            swap = true;
-        }
 
-        */
         int dx = x2 - x1;
         int dy = y2 - y1;
         int signX = signum(dx);
@@ -58,20 +52,7 @@ public class BresenhamLineDrawer implements LineDrawer {
         error = 2 * dy - dx;
         pixelDrawer.drawPixel(x, y, color);
         for(int i = 1; i < dx; i++){
-            /*if(!swap)
-                pixelDrawer.drawPixel(x, y, color);
-            else
-                pixelDrawer.drawPixel(y, x, color);
 
-            while(error >= 0){
-                y += signY;
-                error -= 2 * dx;
-            }
-            x += signX;
-            error += 2 * dy;
-
-
-             */
             pixelDrawer.drawPixel(x, y, color);
 
             while (error >= 0){
@@ -90,21 +71,6 @@ public class BresenhamLineDrawer implements LineDrawer {
 
 
         }
-        /*for (int i = 0; i < dx; i++) {
-            x += signX;
-            if (error >= 0) {
-                y += signY;
-                error += 2 * (dy - dx);
-            } else {
-                error += 2 * dy;
-            }
-            if (swap)
-                pixelDrawer.drawPixel(y, x, color);
-            else
-                pixelDrawer.drawPixel(x, y, color);
-        }
-
-         */
     }
 
     private int signum(int x) {
